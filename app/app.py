@@ -70,5 +70,21 @@ def get_powers():
     # Return list of powers as JSON
     return jsonify(power_list)
 
+# Route to get powers by id
+@app.route('/powers/<int:power_id>', methods=['GET'])
+def get_power(power_id):
+    power = Power.query.get(power_id)
+    
+    if power is None:
+        return jsonify({"error": "Power not found"}), 404
+    
+    power_data = {
+        "id": power.id,
+        "name": power.name,
+        "description": power.description
+    }
+    
+    return jsonify(power_data)
+
 if __name__ == '__main__':
     app.run(debug=True)
