@@ -10,6 +10,18 @@ class Hero(db.Model):
 
     powers = db.relationship('Power', secondary='hero_power', backref='heroes')
 
+    @validates('name')
+    def validate_name(self, key, value):
+        if not value:
+            raise ValueError("Name cannot be empty")
+        return value
+
+    @validates('super_name')
+    def validate_super_name(self, key, value):
+        if not value:
+            raise ValueError("Super name cannot be empty")
+        return value
+
     def __repr__(self):
         return f'<Hero {self.id}: {self.name} ({self.super_name})>'
 
@@ -18,8 +30,16 @@ class Power(db.Model):
     name = db.Column(db.String(255), unique=True, nullable=False)
     description = db.Column(db.Text, nullable=False)
 
+    @validates('name')
+    def validate_name(self, key, value):
+        if not value:
+            raise ValueError("Power name cannot be empty")
+        return value
+
     @validates('description')
     def validate_description(self, key, value):
+        if not value:
+            raise ValueError("Description cannot be empty")
         if len(value) < 20:
             raise ValueError("Description must be at least 20 characters long")
         return value
