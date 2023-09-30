@@ -8,6 +8,7 @@ class Hero(db.Model):
     name = db.Column(db.String(255), unique=True, nullable=False)
     super_name = db.Column(db.String(255), nullable=False)
 
+   # Define a many-to-many relationship with the Power model using the HeroPower association table
     powers = db.relationship('Power', secondary='hero_power', backref='heroes')
 
     @validates('name')
