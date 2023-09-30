@@ -45,8 +45,8 @@ with app.app_context():
         for _ in range(randint(1, 3)):  # Random number of powers per hero
             power = choice(powers)
             hero_power = HeroPower(
-                hero=hero,
-                power=power,
+                hero_id=hero.id, 
+                power_id=power.id,  
                 strength=choice(['Strong', 'Weak', 'Average']),
             )
             hero_powers.append(hero_power)
