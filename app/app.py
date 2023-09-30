@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify, request, make_response
 from flask_migrate import Migrate
-from models import db
+from models import db, Hero, Power, HeroPower
 
 app = Flask(__name__)
 
