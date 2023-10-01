@@ -16,7 +16,7 @@ Before getting started, make sure you have the following prerequisites installed
 
 - Python 3.x
 - Pipenv (for managing Python dependencies)
-- Node.js and npm (for the provided React frontend,optional)
+- Node.js and npm (for the provided React frontend)
 
 # Getting started
 1. Clone this repository to your local machine.
