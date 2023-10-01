@@ -131,59 +131,49 @@ def update_power(id):
     return jsonify(updated_power_data), 200
 
 # Route to create new hero powers
-@app.route("/hero_powers", methods=["POST"])
+@app.route('/hero_powers', methods=['POST'])
 def create_hero_power():
+    
+    # Parse JSON data from the request body
+    data = request.json
 
-    # Get the hero power data from request body
-    hero_power_data = request.get_json()
+    # Check if the requested Power exists
+    power = Power.query.get(data['power_id'])
+    if power is None:
+        return jsonify({"errors": ["Power not found"]}), 404
 
-    # Check if the power and hero exist
-    power = Power.query.get(hero_power_data["power_id"])
-    if not power:
-        return jsonify({
-            "errors": ["Power not found"]
-        }), 404
+    # Check if the requested Hero exists
+    hero = Hero.query.get(data['hero_id'])
+    if hero is None:
+        return jsonify({"errors": ["Hero not found"]}), 404
+    
+    if data['strength'] not in['Strong', 'Weak', 'Average'] :
+        return jsonify({"errors": ["Invalid strength"]}), 400
 
-    hero = Hero.query.get(hero_power_data["hero_id"])
-    if not hero:
-        return jsonify({
-            "errors": ["Hero not found"]
-        }), 404
-
-    # Create new hero power
+    # Create new HeroPower 
     hero_power = HeroPower(
-        strength=hero_power_data["strength"],
-        power_id=hero_power_data["power_id"],
-        hero_id=hero_power_data["hero_id"]
+        strength=data['strength'],
+        power_id=data['power_id'],
+        hero_id=data['hero_id']
     )
 
-    try:
-        # Save new hero power 
-        db.session.add(hero_power)
-        db.session.commit()
-    except Exception as e:
-        # If the hero power is not created successfully, return an error response
-        return jsonify({
-            "errors": ["validation errors"]
-        }), 400
+    # Add the HeroPower to the db
+    db.session.add(hero_power)
+    db.session.commit()
 
-    # Get hero data
-    hero_data = {
-        "id": hero.id,
-        "name": hero.name,
-        "super_name": hero.super_name,
-        "powers": []
-    }
-
-    for power in hero.powers:
-        hero_data["powers"].append({
-            "id": power.id,
-            "name": power.name,
-            "description": power.description
-        })
-
-    # Return the hero data
-    return jsonify(hero_data), 201
+    # Fetch related Hero with their powers
+    hero = Hero.query.get(data['hero_id'])
+    if hero is not None:
+        # Convert Hero object and associated Powers to JSON
+        hero_data = {
+            'id': hero.id,
+            'name': hero.name,
+            'super_name': hero.super_name,
+            'powers': [{'id': power.id, 'name': power.name, 'description': power.description} for power in hero.powers]
+        }
+        return jsonify(hero_data), 201  
+    
+    return jsonify({"errors": ["validation errors"]}), 400
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
