@@ -37,7 +37,7 @@ Before getting started, make sure you have the following prerequisites installed
 
        python seed.py
 
-#  Models and Database
+# Database Models
 This code challenge includes three database models:
 - **Hero**: Represents a superhero with properties like `name` and `super_name`.
 - **Power**: Represents a superpower with properties like `name` and `description`.
