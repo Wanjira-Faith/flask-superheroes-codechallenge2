@@ -194,4 +194,4 @@ def create_hero_power():
     return jsonify(hero_data), 201
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5555, debug=True)
