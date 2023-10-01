@@ -134,48 +134,38 @@ def update_power(id):
 @app.route("/hero_powers", methods=["POST"])
 def create_hero_power():
 
-    # Validate request body
+    # Get the hero power data from request body
     hero_power_data = request.get_json()
 
-    if "strength" not in hero_power_data:
-        return jsonify({
-            "errors": ["strength is required"]
-        }), 400
-
-    if "power_id" not in hero_power_data or not isinstance(hero_power_data["power_id"], int):
-        return jsonify({
-            "errors": ["power_id must be an integer"]
-        }), 400
-
-    if "hero_id" not in hero_power_data or not isinstance(hero_power_data["hero_id"], int):
-        return jsonify({
-            "errors": ["hero_id must be an integer"]
-        }), 400
-
-    # Check if the power exists
+    # Check if the power and hero exist
     power = Power.query.get(hero_power_data["power_id"])
     if not power:
         return jsonify({
             "errors": ["Power not found"]
         }), 404
 
-    # Check if the hero exists
     hero = Hero.query.get(hero_power_data["hero_id"])
     if not hero:
         return jsonify({
             "errors": ["Hero not found"]
         }), 404
 
-    # Create the new hero power
+    # Create new hero power
     hero_power = HeroPower(
         strength=hero_power_data["strength"],
         power_id=hero_power_data["power_id"],
         hero_id=hero_power_data["hero_id"]
     )
 
-    # Save the new hero power
-    db.session.add(hero_power)
-    db.session.commit()
+    try:
+        # Save new hero power 
+        db.session.add(hero_power)
+        db.session.commit()
+    except Exception as e:
+        # If the hero power is not created successfully, return an error response
+        return jsonify({
+            "errors": ["validation errors"]
+        }), 400
 
     # Get hero data
     hero_data = {
